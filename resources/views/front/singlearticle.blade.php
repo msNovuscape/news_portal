@@ -4,6 +4,16 @@
         .news-details-area img{
             width: 100%;
         }
+        .center-4 {
+            margin: auto;
+            width: 60%;
+            padding: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .hide-form {
+            display: none;
+        }
     </style>
     @if(count($datas['header_content']) > 0)
     @foreach($datas['header_content'] as $header_content)
@@ -99,67 +109,100 @@
                             </div>
                             <div class="comments-area">
                                 <h3 class="comments-title">Comments:</h3>
-                                @if(count($datas['comments']) > 0)
-                                <ol class="comment-list">
-                                    <li class="comment">
-                                        <article class="comment-body">
-                                            <footer class="comment-meta">
-                                                <div class="comment-author vcard">
-                                                    <b class="fn">Sinmun</b>
-                                                    <span class="says">says:</span>
+                                @if(count($datas['comment']) > 0)
+                                    @foreach($datas['comment']->where('parent_id',0) as $comment)
+                                       <ol class="comment-list">
+                                          <li class="comment">
+                                            <article class="comment-body">
+                                                <footer class="comment-meta">
+                                                    <div class="comment-author vcard">
+                                                        <b class="fn">{{$comment->name}}</b>
+                                                        <span class="says">says:</span>
+                                                    </div>
+
+                                                    <div class="comment-metadata">
+                                                        <a href="#">
+                                                            <time>{{$comment->created_at}}</time>
+                                                        </a>
+                                                    </div>
+                                                </footer>
+
+                                                <div class="comment-content">
+                                                    <p>{{$comment->comment}}</p>
                                                 </div>
 
-                                                <div class="comment-metadata">
-                                                    <a href="#">
-                                                        <time>April 24, 2019 at 10:59 am</time>
-                                                    </a>
+                                                <div class="reply">
+                                                    <a href = "javascript:;" onclick = "show_reply_form({{$comment->id}});">Reply</a>
                                                 </div>
-                                            </footer>
+                                                <div class="center-{{$comment->id}} hide-form comment-respond">
+                                                    <button onclick = "close_reply_form({{$comment->id}});" style="float: right;">X</button>
 
-                                            <div class="comment-content">
-                                                <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-                                            </div>
+                                                    <form method="POST" action="{{ route('store_comment') }}">
+                                                        {!! csrf_field() !!}
 
-                                            <div class="reply">
-                                                <a href="#" class="comment-reply-link">Reply</a>
-                                            </div>
-                                        </article>
+                                                        <p class="comment-form-comment">
+                                                            <label for="comment">Comment</label>
+                                                            <textarea name="comment" id="comment" cols="45" rows="5" maxlength="65525" required="required"></textarea>
+                                                        </p>
+                                                        <p class="comment-form-author">
+                                                            <label for="name">Name <span class="required">*</span></label>
+                                                            <input type="text" id="name" name="name" required="required">
+                                                        </p>
+                                                        <p class="comment-form-email">
+                                                            <label for="email">Email <span class="required">*</span></label>
+                                                            <input type="email" id="email" name="email" required="required">
+                                                        </p>
+                                                        <input type="hidden" name="article_id" value="{{$datas['articles']->article_id}}">
+                                                        <input type="hidden" name="parent_id" value="{{$comment->id}}">
+                                                        <p class="form-submit">
+                                                            <input type="submit" name="reply" id="reply" value="Post Reply">
+                                                        </p>
+                                                    </form>
+                                                </div>
+
+
+
+                                            </article>
+
+
+
+                                        @foreach($datas['comment_replies']->where('parent_id',$comment->id) as $comment_reply)
 
                                         <ol class="children">
                                             <li class="comment">
-                                                <article class="comment-body">
-                                                    <footer class="comment-meta">
-                                                        <div class="comment-author vcard">
+                                                <article class = "comment-body">
+                                                    <footer class = "comment-meta">
+                                                        <div class = "comment-author vcard">
 
-                                                            <b class="fn">Sinmun</b>
+                                                            <b class="fn">{{$comment_reply->name}}</b>
                                                             <span class="says">says:</span>
                                                         </div>
 
                                                         <div class="comment-metadata">
                                                             <a href="#">
-                                                                <time>April 24, 2019 at 10:59 am</time>
+                                                                <time>{{$comment_reply->created_at}}{{--April 24, 2019 at 10:59 am--}}</time>
                                                             </a>
                                                         </div>
                                                     </footer>
 
                                                     <div class="comment-content">
-                                                        <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                                                        <p>{{$comment_reply->comment}}</p>
                                                     </div>
 
-                                                    <div class="reply">
-                                                        <a href="#" class="comment-reply-link">Reply</a>
-                                                    </div>
                                                 </article>
                                             </li>
                                         </ol>
+                                        @endforeach
                                     </li>
 
 
                                 </ol>
+                                    @endforeach
+
                                 @endif
 
                                 <div class="comment-respond">
-                                    <h3 class="comment-reply-title">Leave a Reply</h3>
+                                    <h3 class="comment-reply-title">Leave a Comment</h3>
 
                                     <form class="comment-form" method="POST" action="{{ route('store_comment') }}">
                                         {!! csrf_field() !!}
@@ -181,9 +224,20 @@
                                             <label for="email">Email <span class="required">*</span></label>
                                             <input type="email" id="email" name="email" required="required">
                                         </p>
+                                        <p class="form-recaptcha">
+                                            <label class="control-label">Captcha<span class="required">*</span></label>
+
+                                        <div class="g-recaptcha" data-sitekey="{{ env('CAPTCHA_SITE_KEY') }}"></div>
+                                        </p>
+                                        <br/>
+                                        {{--@if ($errors->has('g-recaptcha-response'))
+                                            <span class="invalid-feedback" style="display: block;">
+                                              <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                            </span>
+                                        @endif--}}
                                         <input type="hidden" name="article_id" value="{{$datas['articles']->article_id}}">
                                         <p class="form-submit">
-                                            <input type="submit" name="submit" id="submit" class="submit" value="Post Comment">
+                                            <input type="submit" name="submit" id="reply-submit" class="submit" value="Post Comment">
                                         </p>
                                     </form>
                                 </div>
@@ -216,4 +270,22 @@
             </div>
         </section>
     @endif
+@endsection
+@section('javascript')
+
+    <script type="text/javascript">
+
+    function show_reply_form(comment_id)
+    {
+        $('.center-'+comment_id).show();
+            $(this).hide();
+    }
+    function close_reply_form(comment_id) {
+        $('.center-'+comment_id).hide();
+        $('#show').show();
+    }
+    /*$('#close').on('click', function () {
+        $('.center').hide();
+    })*/
+    </script>
 @endsection

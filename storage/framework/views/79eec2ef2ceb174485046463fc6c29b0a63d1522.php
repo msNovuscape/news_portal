@@ -69,6 +69,8 @@
     <script src="<?php echo e(asset('/js/default/contact-form-script.js')); ?>"></script>
     <script src="<?php echo e(asset('/js/default/jquery_002.js')); ?>"></script>
     <script src="<?php echo e(asset('/js/default/main.js')); ?>"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
     <?php echo $__env->yieldContent('javascript'); ?>
 <?php echo $__env->yieldContent('scripts'); ?>
 </body>

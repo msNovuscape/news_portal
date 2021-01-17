@@ -54,7 +54,7 @@ class CommentController extends Controller
         }
         if ($request->filter_status)
         {
-            $comment->where('status', $request->filter_status);
+            ($request->filter_status == '2') ? $comment->where('status', false) : $comment->where('status', $request->filter_status);
             $datas['filter_status'] = $request->filter_status;
             $url .= '&filter_status='.$request->filter_status;
         }
@@ -72,6 +72,17 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function updateStatus(Request $request){
+        $comment =  Comment::find($request->id);
+        if($comment->status === 1){
+            $comment->status = 0;
+        }
+        else{
+            $comment->status = 1;
+        }
+        $comment->save();
+        return redirect()->back();
+    }
     public function create()
     {
         $permission = UserGroup::checkEditPermission('ArticleController');

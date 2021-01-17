@@ -77,6 +77,8 @@ Route::group(['prefix' => 'admin'], function() {
     Route::post('/article/removeFile', 'admin\ArticleController@removefile');
 
     Route::get('/comment/{id}', 'admin\CommentController@index');
+    Route::get('/comment/{id}/status/', 'admin\CommentController@updateStatus');
+
 
 
 

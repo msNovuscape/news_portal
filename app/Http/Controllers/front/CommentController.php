@@ -12,11 +12,16 @@ use App\Models\Layout;
 use App\Models\Menu;
 use App\Models\Module;
 use App\Models\SettingDescription;
+
+use App\Rules\Captcha;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
     public function store(Request $request){
+        $request->validate([
+            'g-recaptcha-response' => new Captcha()
+        ]);
         $mydata = array(
 
             'article_id' => $request->article_id,
@@ -24,11 +29,13 @@ class CommentController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'status' => 0,
+            'parent_id' => $request->parent_id ? $request->parent_id :0,
 
         );
         $comment = Comment::create($mydata);
         if($comment)
         {
+
             return redirect()->back();
         }
     }

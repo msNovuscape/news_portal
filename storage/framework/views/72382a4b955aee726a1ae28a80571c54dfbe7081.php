@@ -5,21 +5,22 @@
     <li class="breadcrumb-item"><a href="<?php echo e(url('/admin')); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
     <li class="breadcrumb-item active">Comment</li>
 <?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
+
     <div class="row">
+        <b style="text-align:center"><?php echo e($datas['article']->first()->title); ?></b>
+
         <div class="col-md-12">
             <div class="card">
-
 
                 <div class="card-body table-responsive p-0">
 
                     <table class="table table-bordered table-hover">
                         <thead>
                         <tr>
-                            <th>Article</th>
-                            <th>S.N</th>
                             <th>Comment</th>
-                            <th>Name</th>
+                            <th>Author</th>
                             <th>Email</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -28,8 +29,6 @@
 
                         <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
                             <td><input type="text" id="filter_comment" value="<?php echo e($datas['filter_comment']); ?>" class="form-control"></td>
                             <td></td>
                             <td></td>
@@ -48,19 +47,18 @@
                             <td><a href="javascript:void(0)" onclick="filterData()" class="btn btn-success btn-sm float-right"><i class="fa fa-search"></i> Search </a> </td>
                         </tr>
 
-                        <?php $i=1;
-                        ?>
                         <tr>
-                        <td rowspan="<?php echo e($datas['comment']->count()); ?>"><?php echo $datas['article']->first()->title;?></td>
 
                         <?php foreach ($datas['comment'] as $row) { ?>
-                            <td><?php echo $i++ ;?></td>
                             <td><?php echo $row->comment;?></td>
                             <td><?php echo $row->name;?></td>
                             <td><?php echo $row->email;?></td>
                             <td><?php echo $row->status == 1 ? 'Active' : 'Inactive';?></td>
+
                             <td>
-                                <a href="<?php echo e(url('/admin/comment'.$row->id)); ?>" class="btn btn-info btn-sm float-left mr-1">Reply</a>
+
+                                <a href="<?php echo e(url('/admin/comment/'.$row->id.'/status')); ?>" class="btn btn-danger btn-sm float-right mr-1"><?php echo $row->status == 1 ? 'Unpublish' : 'Publish';?></a>
+
                             </td>
                         </tr>
                         <?php  } ?>
@@ -105,8 +103,10 @@
             {
                 url += '&filter_status='+filter_status;
             }
-            console.log(url);
             location = url;
+        }
+        function updateStatus() {
+
         }
     </script>
 <?php $__env->stopSection(); ?>

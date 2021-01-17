@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\library\Settings;
 use App\Models\Article;
 use App\Models\ArticleToMenu;
+use App\Models\Comment;
 use App\Models\ImageTool;
 use App\Models\Layout;
 use App\Models\Menu;
@@ -161,7 +162,11 @@ class ArticleController extends Controller
             $datas['header_content'][] = array(
                 'module' => $header_module->index($header->module_id, json_decode($header->setting)),
             );
-        }
+        };
+        $article_id = $datas['articles']['article_id'];
+        $datas['comment'] = Comment::where('article_id',$article_id)->where('status',true)->get();
+        $datas['comment_replies'] = $datas['comment']->where('parent_id','!=','0')->where('status',true);
+
         return view('front.singlearticle')->with('datas', $datas);
     }
 }
